@@ -637,7 +637,11 @@ const EnhancedBioLearningApp = () => {
                 </div>
               </div>
               <button
-                onClick={() => setReviewMode(true)}
+                onClick={() => {
+                  setReviewMode(true);
+                  setCurrentQuestionIndex(0);
+                  setCurrentScreen('quiz');
+                }}
                 className="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-xl font-bold transition-all"
               >
                 복습 시작
@@ -1092,15 +1096,186 @@ const EnhancedBioLearningApp = () => {
     );
   };
 
+  // 오답 노트 복습 모드 렌더링
+  const renderReviewMode = () => {
+    if (wrongAnswers.length === 0) {
+      setReviewMode(false);
+      setCurrentScreen('menu');
+      return null;
+    }
+
+    const currentWrong = wrongAnswers[currentQuestionIndex];
+    if (!currentWrong) {
+      setReviewMode(false);
+      setCurrentQuestionIndex(0);
+      setCurrentScreen('menu');
+      return null;
+    }
+
+    const progress = ((currentQuestionIndex + 1) / wrongAnswers.length) * 100;
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-900 via-purple-900 to-pink-900">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* 헤더 */}
+          <div className="flex items-center justify-between mb-8">
+            <button
+              onClick={() => {
+                setReviewMode(false);
+                setCurrentQuestionIndex(0);
+                setCurrentScreen('menu');
+              }}
+              className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-medium">돌아가기</span>
+            </button>
+            <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+              <span className="font-bold text-red-300">오답 복습 모드</span>
+            </div>
+          </div>
+
+          {/* 진행률 */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-8 border border-white/20">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <XCircle className="w-6 h-6 text-red-400" />
+                틀린 문제 다시 풀기
+              </h2>
+              <span className="text-sm font-bold text-purple-200">
+                {currentQuestionIndex + 1} / {wrongAnswers.length}
+              </span>
+            </div>
+            <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          {/* 문제 카드 */}
+          <div className="bg-white rounded-3xl p-10 shadow-2xl mb-8">
+            {/* 오답 표시 */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="px-4 py-2 bg-red-100 text-red-700 rounded-full text-xs font-bold flex items-center gap-2">
+                <XCircle className="w-4 h-4" />
+                이전에 틀린 문제
+              </span>
+              <span className="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
+                {currentWrong.chapter}
+              </span>
+            </div>
+
+            {/* 문제 */}
+            <div className="mb-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="bg-gradient-to-br from-red-500 to-pink-500 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-black text-lg flex-shrink-0">
+                  Q
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 leading-relaxed flex-1">
+                  {currentWrong.question}
+                </h3>
+              </div>
+
+              {/* 이전 선택 (틀린 답) */}
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-6">
+                <div className="flex items-start gap-3">
+                  <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-bold text-red-900 mb-1">이전에 선택한 답</p>
+                    <p className="text-sm text-red-800">{currentWrong.yourAnswer}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 정답 표시 */}
+              <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg mb-6">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-bold text-green-900 mb-1">정답</p>
+                    <p className="text-sm text-green-800 font-bold">{currentWrong.correctAnswer}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 해설 */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 mb-6">
+                <h4 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-indigo-600" />
+                  해설
+                </h4>
+                <p className="text-slate-700 leading-relaxed">
+                  {currentWrong.rationale}
+                </p>
+              </div>
+
+              {/* 학습 내용 */}
+              {currentWrong.studyContent && (
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6">
+                  <h4 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                    <Brain className="w-5 h-5 text-purple-600" />
+                    심화 학습
+                  </h4>
+                  <p className="text-slate-700 leading-relaxed">
+                    {currentWrong.studyContent}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 네비게이션 버튼 */}
+          <div className="flex gap-4">
+            {currentQuestionIndex > 0 && (
+              <button
+                onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                className="flex-1 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white font-bold py-6 rounded-2xl transition-all border border-white/20 flex items-center justify-center gap-2"
+              >
+                <ChevronRight className="w-5 h-5 rotate-180" />
+                이전 문제
+              </button>
+            )}
+            
+            {currentQuestionIndex < wrongAnswers.length - 1 ? (
+              <button
+                onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-6 rounded-2xl transition-all shadow-lg shadow-pink-500/50 flex items-center justify-center gap-2"
+              >
+                다음 문제
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setReviewMode(false);
+                  setCurrentQuestionIndex(0);
+                  setCurrentScreen('menu');
+                }}
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-6 rounded-2xl transition-all shadow-lg shadow-green-500/50 flex items-center justify-center gap-2"
+              >
+                <CheckCircle className="w-5 h-5" />
+                복습 완료
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // 메인 렌더링
   return (
     <div className="font-sans antialiased">
       {currentScreen === 'menu' && renderMenu()}
       {currentScreen === 'study' && renderStudyMode()}
-      {currentScreen === 'quiz' && renderQuiz()}
+      {currentScreen === 'quiz' && !reviewMode && renderQuiz()}
+      {currentScreen === 'quiz' && reviewMode && renderReviewMode()}
       {currentScreen === 'result' && renderResult()}
     </div>
   );
 };
 
 export default EnhancedBioLearningApp;
+
