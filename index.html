@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="동물보건학과 전용 생명과학 학습 플랫폼. 세포, DNA, 소화, 면역 등 생명과학 전 범위를 체계적으로 학습하세요." />
+    <meta name="keywords" content="생명과학, 동물보건, 생물학, 퀴즈, 학습, 교육" />
+    <meta name="author" content="BioLearn Pro" />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BioLearn Pro - 생명과학 학습 플랫폼" />
+    <meta property="og:description" content="스마트하게 배우고, 확실하게 기억하세요" />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#8b5cf6" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <title>BioLearn Pro - 생명과학 학습 플랫폼</title>
+    
+    <style>
+      /* 로딩 화면 */
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #8b5cf6 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+      
+      #loading.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      .loading-text {
+        color: white;
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 로딩 화면 -->
+    <div id="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">BioLearn Pro 로딩 중...</div>
+    </div>
+    
+    <!-- React 앱 마운트 지점 -->
+    <div id="root"></div>
+    
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <script>
+      // 앱 로드 후 로딩 화면 숨기기
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          document.getElementById('loading').classList.add('hidden');
+        }, 500);
+      });
+    </script>
+  </body>
+</html>
