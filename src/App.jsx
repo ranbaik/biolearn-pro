@@ -917,7 +917,7 @@ const EnhancedBioLearningApp = () => {
     {
       id: 3,
       question: "폐포에서 산소와 이산화탄소의 교환이 일어나는 원리는?",
-      options: ["능동 수송", "촉진 확산", "단순 확산", "삼투"]
+      options: ["능동 수송", "촉진 확산", "단순 확산", "삼투"],
       correctIndex: 2,
       difficulty: 'medium',
       hint: "농도 기울기를 따라 움직입니다.",
