@@ -1221,10 +1221,15 @@ const EnhancedBioLearningApp = () => {
       setTotalScore(totalScore + 10);
     } else {
       // 오답 저장
-      setWrongAnswers([...wrongAnswers, {
+      } else {
+      // 오답 저장
+       setWrongAnswers([...wrongAnswers, {
         chapter: selectedChapter.title,
-        question: currentQuestion,
-        selectedAnswer: answerIndex
+        question: currentQuestion.question,
+        yourAnswer: currentQuestion.options[answerIndex],
+        correctAnswer: currentQuestion.options[currentQuestion.correctIndex],
+        rationale: currentQuestion.rationale,
+        studyContent: currentQuestion.studyContent
       }]);
     }
     
